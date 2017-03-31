@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title></title>
+<meta name="author" content="(Leo Gomez)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h2 class="author">Leo Gomez</h2><p class="date">Created: 2017-03-31 Fri 17:58</p>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-org7fedec4">1. Fun With Type Coercion</a>
+<ul>
+<li><a href="#/slide-org9ec6aad">1.1. Examples of Type Coercion</a></li>
+<li><a href="#/slide-org3b1ca89">1.2. How Type Coercion Works</a>
+<ul>
+<li><a href="#/slide-orgf84cf67">1.2.1. ECMAScript Spec Abstract Operations</a></li>
+<li><a href="#/slide-orgf06cfa6">1.2.2. Values Are Converted To Primitives With ToPrimitive()</a></li>
+<li><a href="#/slide-orgccad34c">1.2.3. Seeing ToPrimitive() in action</a></li>
+<li><a href="#/slide-org8054a06">1.2.4. Stepping though a conversion</a></li>
+</ul>
+</li>
+<li><a href="#/slide-org2f22381">1.3. Using Type Coercion for Good</a>
+<ul>
+<li><a href="#/slide-org1beb680">1.3.1. Default Assignment Shorthand</a></li>
+</ul>
+</li>
+<li><a href="#/slide-org12e1f04">1.4. Using Type Coercion for Evil</a>
+<ul>
+<li><a href="#/slide-org36150dd">1.4.1. Write Any JS Program With Only {}[]()!+</a></li>
+<li><a href="#/slide-org5b2752e">1.4.2. Produce Numbers Without Numbers</a></li>
+<li><a href="#/slide-org9593c01">1.4.3. Produce Strings Without Alphanumeric Characters</a></li>
+<li><a href="#/slide-orgf1b342a">1.4.4. Executing Our JSFuck</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-org7fedec4">
+<h2 id="org7fedec4"><span class="section-number-2">1</span> Fun With Type Coercion</h2>
+<div class="outline-text-2" id="text-1">
+</div></section>
+</section>
+<section>
+<section id="slide-org9ec6aad">
+<h3 id="org9ec6aad"><span class="section-number-3">1.1</span> Examples of Type Coercion</h3>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #2d9574;">'one'</span> + <span style="color: #a45bad;">1</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">'one1'</span>
+<span style="color: #a45bad;">true</span> + <span style="color: #a45bad;">1</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">2</span>
+<span style="color: #4f97d7;">[]</span> + <span style="color: #4f97d7;">[]</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">''</span>
+<span style="color: #4f97d7;">[]</span> + <span style="color: #4f97d7;">{}</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">[object Object]</span>
+<span style="color: #4f97d7;">{}</span> + <span style="color: #4f97d7;">{}</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">NaN</span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org3b1ca89">
+<h3 id="org3b1ca89"><span class="section-number-3">1.2</span> How Type Coercion Works</h3>
+<div class="outline-text-3" id="text-1-2">
+</div></section>
+<section id="slide-orgf84cf67">
+<h4 id="orgf84cf67"><span class="section-number-4">1.2.1</span> ECMAScript Spec Abstract Operations</h4>
+<ul>
+<li><a href="http://www.ecma-international.org/ecma-262/5.1/#sec-9.3"><code>ToNumber</code></a></li>
+<li><a href="http://www.ecma-international.org/ecma-262/5.1/#sec-9.8"><code>ToString</code></a></li>
+<li><a href="http://www.ecma-international.org/ecma-262/5.1/#sec-9.2"><code>ToBoolean</code></a></li>
+<li>etc.</li>
+
+</ul>
+
+</section>
+<section id="slide-orgf06cfa6">
+<h4 id="orgf06cfa6"><span class="section-number-4">1.2.2</span> Values Are Converted To Primitives With ToPrimitive()</h4>
+<ul>
+<li><code>ToPrimitive(input [, PreferredType?])</code></li>
+
+</ul>
+<ul>
+<li class="fragment roll-in">if <code>input</code> is a primitive, return <code>input</code></li>
+<li class="fragment roll-in">if <code>input.valueOf()</code> is a primitive, return that</li>
+<li class="fragment roll-in">if <code>input.toString()</code> is a primitive, return that</li>
+<li class="fragment roll-in">otherwise, throw a <code>TypeError</code></li>
+
+</ul>
+
+</section>
+<section id="slide-orgccad34c">
+<h4 id="orgccad34c"><span class="section-number-4">1.2.3</span> Seeing ToPrimitive() in action</h4>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">obj</span> = <span style="color: #4f97d7;">{</span>
+       valueOf: <span style="color: #bc6ec5;">()</span> =&gt; <span style="color: #bc6ec5;">{</span>
+           console.log<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"valueOf method called"</span><span style="color: #2d9574;">)</span>;
+           <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">{}</span>; <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">not a primitive</span>
+       <span style="color: #bc6ec5;">}</span>,
+       toString: <span style="color: #bc6ec5;">()</span> =&gt; <span style="color: #bc6ec5;">{</span>
+           console.log<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"toString method called"</span><span style="color: #2d9574;">)</span>;
+           <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">{}</span>; <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">not a primitive</span>
+       <span style="color: #bc6ec5;">}</span>
+   <span style="color: #4f97d7;">}</span>
+
+Number<span style="color: #4f97d7;">(</span>obj<span style="color: #4f97d7;">)</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">valueOf method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">toString method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">TypeError</span>
+
+String<span style="color: #4f97d7;">(</span>obj<span style="color: #4f97d7;">)</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">toString method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">valueOf method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">TypeError</span>
+</pre>
+</div>
+
+</section>
+<section >
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">obj</span> = <span style="color: #4f97d7;">{</span>
+       valueOf: <span style="color: #bc6ec5;">()</span> =&gt; <span style="color: #bc6ec5;">{</span>
+           console.log<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"valueOf method called"</span><span style="color: #2d9574;">)</span>;
+           <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">2</span>; <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">primitive!</span>
+       <span style="color: #bc6ec5;">}</span>,
+       toString: <span style="color: #bc6ec5;">()</span> =&gt; <span style="color: #bc6ec5;">{</span>
+           console.log<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"toString method called"</span><span style="color: #2d9574;">)</span>;
+           <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">{}</span>; <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">not a primitive</span>
+       <span style="color: #bc6ec5;">}</span>
+   <span style="color: #4f97d7;">}</span>
+
+Number<span style="color: #4f97d7;">(</span>obj<span style="color: #4f97d7;">)</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">valueOf method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">2</span>
+
+String<span style="color: #4f97d7;">(</span>obj<span style="color: #4f97d7;">)</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">toString method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">valueOf method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"2"</span>
+</pre>
+</div>
+
+</section>
+<section >
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">obj</span> = <span style="color: #4f97d7;">{</span>
+       valueOf: <span style="color: #bc6ec5;">()</span> =&gt; <span style="color: #bc6ec5;">{</span>
+           console.log<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"valueOf method called"</span><span style="color: #2d9574;">)</span>;
+           <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">{}</span>; <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">not a primitive</span>
+       <span style="color: #bc6ec5;">}</span>,
+       toString: <span style="color: #bc6ec5;">()</span> =&gt; <span style="color: #bc6ec5;">{</span>
+           console.log<span style="color: #2d9574;">(</span><span style="color: #2d9574;">"toString method called"</span><span style="color: #2d9574;">)</span>;
+           <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #2d9574;">'string'</span>; <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">primitive!</span>
+       <span style="color: #bc6ec5;">}</span>
+   <span style="color: #4f97d7;">}</span>
+
+Number<span style="color: #4f97d7;">(</span>obj<span style="color: #4f97d7;">)</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">valueOf method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">toString method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">NaN</span>
+
+String<span style="color: #4f97d7;">(</span>obj<span style="color: #4f97d7;">)</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">toString method called</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"string"</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-org8054a06">
+<h4 id="org8054a06"><span class="section-number-4">1.2.4</span> Stepping though a conversion</h4>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #2d9574;">'one'</span> + <span style="color: #a45bad;">1</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">'one1'</span>
+</pre>
+</div>
+<ul>
+<li><code>+</code> fails to coerce <code>'one'</code> into a number</li>
+<li><code>+</code> convert <code>1</code> into a string</li>
+<li><code>+</code> joins 'one' and '1'.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #a45bad;">true</span> + <span style="color: #a45bad;">1</span>
+</pre>
+</div>
+<ul>
+<li><code>+</code> converts <code>true</code> into a number, <code>1</code></li>
+<li><code>+</code> adds <code>1</code> and <code>1</code></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org2f22381">
+<h3 id="org2f22381"><span class="section-number-3">1.3</span> Using Type Coercion for Good</h3>
+<div class="outline-text-3" id="text-1-3">
+</div></section>
+<section id="slide-org1beb680">
+<h4 id="org1beb680"><span class="section-number-4">1.3.1</span> Default Assignment Shorthand</h4>
+<p>
+Without type coercion, values need to be explicitly checked.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7; font-weight: bold;">function</span> <span style="color: #bc6ec5; font-weight: bold;">myFunc</span><span style="color: #4f97d7;">(</span><span style="color: #7590db;">input</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">result</span> = someFunc<span style="color: #bc6ec5;">(</span>input<span style="color: #bc6ec5;">)</span>;
+
+  <span style="color: #4f97d7; font-weight: bold;">if</span> <span style="color: #bc6ec5;">(</span>result !== <span style="color: #a45bad;">undefined</span> &amp;&amp; result &amp;&amp; <span style="color: #a45bad;">null</span><span style="color: #bc6ec5;">)</span> <span style="color: #bc6ec5;">{</span>
+    <span style="color: #4f97d7; font-weight: bold;">return</span> result;
+  <span style="color: #bc6ec5;">}</span> <span style="color: #4f97d7; font-weight: bold;">else</span> <span style="color: #bc6ec5;">{</span>
+    <span style="color: #4f97d7; font-weight: bold;">return</span> <span style="color: #a45bad;">0</span>;
+  <span style="color: #bc6ec5;">}</span>
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+
+<p>
+With type coercion, non-boolean values can be checked with boolean operators.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7; font-weight: bold;">function</span> <span style="color: #bc6ec5; font-weight: bold;">myFunc</span><span style="color: #4f97d7;">(</span><span style="color: #7590db;">input</span><span style="color: #4f97d7;">)</span> <span style="color: #4f97d7;">{</span>
+  <span style="color: #4f97d7; font-weight: bold;">return</span> someFunc<span style="color: #bc6ec5;">(</span>input<span style="color: #bc6ec5;">)</span> || <span style="color: #a45bad;">0</span>;
+<span style="color: #4f97d7;">}</span>
+</pre>
+</div>
+
+
+</section>
+</section>
+<section>
+<section id="slide-org12e1f04">
+<h3 id="org12e1f04"><span class="section-number-3">1.4</span> Using Type Coercion for Evil</h3>
+<div class="outline-text-3" id="text-1-4">
+</div></section>
+<section id="slide-org36150dd">
+<h4 id="org36150dd"><span class="section-number-4">1.4.1</span> Write Any JS Program With Only {}[]()!+</h4>
+<p>
+This is known as JSFuck
+</p>
+</section>
+<section id="slide-org5b2752e">
+<h4 id="org5b2752e"><span class="section-number-4">1.4.2</span> Produce Numbers Without Numbers</h4>
+<ul>
+<li class="fragment roll-in"><code>+[]</code> produces <code>0</code></li>
+<li class="fragment roll-in"><code>+!+[]</code> produces <code>1</code></li>
+<li class="fragment roll-in"><code>+!+[]+!+[]</code> produces <code>2</code></li>
+<li class="fragment roll-in">and so on</li>
+
+</ul>
+
+</section>
+<section id="slide-org9593c01">
+<h4 id="org9593c01"><span class="section-number-4">1.4.3</span> Produce Strings Without Alphanumeric Characters</h4>
+<p>
+Get primitive values
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript">!<span style="color: #4f97d7;">[]</span>      <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">false</span>
+!!<span style="color: #4f97d7;">[]</span>     <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">true</span>
+<span style="color: #4f97d7;">[][</span><span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>   <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">undefined</span>
++<span style="color: #4f97d7;">[</span>!<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>   <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">NaN</span>
+</pre>
+</div>
+
+</section>
+<section >
+<p>
+Convert primitives to strings
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7;">[]</span> + !<span style="color: #4f97d7;">[]</span>      <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"false"</span>
+<span style="color: #4f97d7;">[]</span> + !!<span style="color: #4f97d7;">[]</span>     <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"true"</span>
+<span style="color: #4f97d7;">[]</span> + <span style="color: #4f97d7;">[][</span><span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>   <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"undefined"</span>
+<span style="color: #4f97d7;">[]</span> + +<span style="color: #4f97d7;">[</span>!<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>   <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">'NaN'</span>
+</pre>
+</div>
+
+
+</section>
+<section >
+<p>
+Use brackets to extract characters
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7;">(</span><span style="color: #bc6ec5;">[]</span> + !<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)[</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>      <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"f"</span>
+<span style="color: #4f97d7;">(</span><span style="color: #bc6ec5;">[]</span> + !!<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)[</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>     <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"t"</span>
+<span style="color: #4f97d7;">(</span><span style="color: #bc6ec5;">[]</span> + <span style="color: #bc6ec5;">[][</span><span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">)[</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>   <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"u"</span>
+<span style="color: #4f97d7;">(</span><span style="color: #bc6ec5;">[]</span> + +<span style="color: #bc6ec5;">[</span>!<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">)[</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>   <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">'N'</span>
+</pre>
+</div>
+
+</section>
+<section >
+<p>
+Now you can create strings
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7;">(</span>!<span style="color: #bc6ec5;">[]</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)[</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>+<span style="color: #4f97d7;">(</span><span style="color: #bc6ec5;">[][</span><span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)[</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>+<span style="color: #4f97d7;">(</span><span style="color: #bc6ec5;">[][</span><span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)[</span>+!+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"fun"</span>
+</pre>
+</div>
+
+</section>
+<section >
+<p>
+Extracting the <code>+</code> character
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript">+!+<span style="color: #4f97d7;">[]</span>+<span style="color: #4f97d7;">(</span>!+<span style="color: #bc6ec5;">[]</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)[</span>!+<span style="color: #bc6ec5;">[]</span>+!+<span style="color: #bc6ec5;">[]</span>+!+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>+<span style="color: #4f97d7;">[</span>+!+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>+<span style="color: #4f97d7;">[</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>+<span style="color: #4f97d7;">[</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"1e100"</span>
+
++<span style="color: #4f97d7;">(</span>+!+<span style="color: #bc6ec5;">[]</span>+<span style="color: #bc6ec5;">(</span>!+<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">[</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">[</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">[</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">)</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">1e+100</span>
+
+<span style="color: #4f97d7;">(</span>+<span style="color: #bc6ec5;">(</span>+!+<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">(</span>!+<span style="color: #67b11d;">[]</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">)[</span>!+<span style="color: #67b11d;">[]</span>+!+<span style="color: #67b11d;">[]</span>+!+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[</span>+!+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"1e+100"</span>
+
+<span style="color: #4f97d7;">(</span>+<span style="color: #bc6ec5;">(</span>+!+<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">(</span>!+<span style="color: #67b11d;">[]</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">)[</span>!+<span style="color: #67b11d;">[]</span>+!+<span style="color: #67b11d;">[]</span>+!+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[</span>+!+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)</span>+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">)[</span>+!+<span style="color: #bc6ec5;">[]</span>+!+<span style="color: #bc6ec5;">[]</span><span style="color: #4f97d7;">]</span>
+<span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">"+"</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-orgf1b342a">
+<h4 id="orgf1b342a"><span class="section-number-4">1.4.4</span> Executing Our JSFuck</h4>
+<ul>
+<li class="fragment roll-in">Strings can't hurt us</li>
+<li class="fragment roll-in">&#x2026; unless we use <code>eval()</code></li>
+<li class="fragment roll-in">&#x2026; or <code>Function()</code></li>
+
+</ul>
+
+</section>
+<section >
+<p>
+This:
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7;">[][</span><span style="color: #bc6ec5;">(</span>!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">[</span>!<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[][</span><span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)[</span>+!+<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+
+<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">][</span><span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">[][</span><span style="color: #67b11d;">(</span>!
+<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span><span style="color: #b1951d;">[</span>!<span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span>+<span style="color: #b1951d;">[][</span><span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span><span style="color: #67b11d;">)[</span>+!+<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[</span>+<span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>
++<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>!+<span style="color: #2d9574;">[]</span>+!+
+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[][</span><span style="color: #67b11d;">(</span>!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span><span style="color: #b1951d;">[</span>!<span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span>+<span style="color: #b1951d;">[][</span><span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span><span style="color: #67b11d;">)[</span>+!+<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[</span>+<span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!<span style="color: #b1951d;">[]</span>+
+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)</span>
+<span style="color: #67b11d;">[</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)[</span>+!+<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">[][</span><span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span>
+<span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">[][</span><span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span><span style="color: #2d9574;">[][</span><span style="color: #67b11d;">(</span>!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+
+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span><span style="color: #b1951d;">[</span>!<span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span>+<span style="color: #b1951d;">[][</span><span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span><span style="color: #67b11d;">)[</span>+!+<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[</span>+<span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+<span style="color: #b1951d;">[]</span>
+<span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span><span style="color: #2d9574;">]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>
++<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[][</span><span style="color: #67b11d;">(</span>!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span><span style="color: #b1951d;">[</span>!<span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span>+<span style="color: #b1951d;">[][</span><span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span><span style="color: #67b11d;">)[</span>+!+<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[</span>+<span style="color: #4f97d7;">[]</span><span style="color: #b1951d;">]</span>
+<span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span>+<span style="color: #67b11d;">(</span>!
+!<span style="color: #b1951d;">[]</span>+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">)[</span>+!+<span style="color: #b1951d;">[]</span><span style="color: #67b11d;">]</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">)[</span>+!+<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[</span>+<span style="color: #67b11d;">[]</span><span style="color: #2d9574;">]</span><span style="color: #bc6ec5;">]</span>+<span style="color: #bc6ec5;">(</span>!!<span style="color: #2d9574;">[]</span>+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">)[</span>+!+<span style="color: #2d9574;">[]</span><span style="color: #bc6ec5;">]</span><span style="color: #4f97d7;">](</span>...<span style="color: #4f97d7;">)()</span>
+</pre>
+</div>
+
+<p>
+translates to:
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-javascript"><span style="color: #4f97d7;">[][</span><span style="color: #2d9574;">"filter"</span><span style="color: #4f97d7;">][</span><span style="color: #2d9574;">'constructor'</span><span style="color: #4f97d7;">](</span>...<span style="color: #4f97d7;">)()</span>
+</pre>
+</div>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
