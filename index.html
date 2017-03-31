@@ -7,9 +7,9 @@
 <style type="text/css">
 .underline { text-decoration: underline; }
 </style>
-<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
 
-<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css" id="theme"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css" id="theme"/>
 
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
@@ -18,7 +18,7 @@
         var link = document.createElement( 'link' );
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
         document.getElementsByTagName( 'head' )[0].appendChild( link );
     }
 </script>
@@ -26,35 +26,35 @@
 <body>
 <div class="reveal">
 <div class="slides">
-<section id="sec-title-slide"><h2 class="author">Leo Gomez</h2><p class="date">Created: 2017-03-31 Fri 17:58</p>
+<section id="sec-title-slide"><h2 class="author">Leo Gomez</h2><p class="date">Created: 2017-03-31 Fri 18:09</p>
 </section>
 <section id="table-of-contents">
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#/slide-org7fedec4">1. Fun With Type Coercion</a>
+<li><a href="#/slide-org57207e3">1. Fun With Type Coercion</a>
 <ul>
-<li><a href="#/slide-org9ec6aad">1.1. Examples of Type Coercion</a></li>
-<li><a href="#/slide-org3b1ca89">1.2. How Type Coercion Works</a>
+<li><a href="#/slide-org89443d7">1.1. Examples of Type Coercion</a></li>
+<li><a href="#/slide-orgcb85180">1.2. How Type Coercion Works</a>
 <ul>
-<li><a href="#/slide-orgf84cf67">1.2.1. ECMAScript Spec Abstract Operations</a></li>
-<li><a href="#/slide-orgf06cfa6">1.2.2. Values Are Converted To Primitives With ToPrimitive()</a></li>
-<li><a href="#/slide-orgccad34c">1.2.3. Seeing ToPrimitive() in action</a></li>
-<li><a href="#/slide-org8054a06">1.2.4. Stepping though a conversion</a></li>
+<li><a href="#/slide-orgff30973">1.2.1. ECMAScript Spec Abstract Operations</a></li>
+<li><a href="#/slide-orgbd56232">1.2.2. Values Are Converted To Primitives With ToPrimitive()</a></li>
+<li><a href="#/slide-orga5268ea">1.2.3. Seeing ToPrimitive() in action</a></li>
+<li><a href="#/slide-orgf12e849">1.2.4. Stepping though a conversion</a></li>
 </ul>
 </li>
-<li><a href="#/slide-org2f22381">1.3. Using Type Coercion for Good</a>
+<li><a href="#/slide-orgb7499c2">1.3. Using Type Coercion for Good</a>
 <ul>
-<li><a href="#/slide-org1beb680">1.3.1. Default Assignment Shorthand</a></li>
+<li><a href="#/slide-org690ee12">1.3.1. Default Assignment Shorthand</a></li>
 </ul>
 </li>
-<li><a href="#/slide-org12e1f04">1.4. Using Type Coercion for Evil</a>
+<li><a href="#/slide-org23da485">1.4. Using Type Coercion for Evil</a>
 <ul>
-<li><a href="#/slide-org36150dd">1.4.1. Write Any JS Program With Only {}[]()!+</a></li>
-<li><a href="#/slide-org5b2752e">1.4.2. Produce Numbers Without Numbers</a></li>
-<li><a href="#/slide-org9593c01">1.4.3. Produce Strings Without Alphanumeric Characters</a></li>
-<li><a href="#/slide-orgf1b342a">1.4.4. Executing Our JSFuck</a></li>
+<li><a href="#/slide-org6bcdaf1">1.4.1. Write Any JS Program With Only {}[]()!+</a></li>
+<li><a href="#/slide-orgf5c1dbd">1.4.2. Produce Numbers Without Numbers</a></li>
+<li><a href="#/slide-org0e3c378">1.4.3. Produce Strings Without Alphanumeric Characters</a></li>
+<li><a href="#/slide-org0a8ceb0">1.4.4. Executing Our JSFuck</a></li>
 </ul>
 </li>
 </ul>
@@ -65,14 +65,14 @@
 </section>
 
 <section>
-<section id="slide-org7fedec4">
-<h2 id="org7fedec4"><span class="section-number-2">1</span> Fun With Type Coercion</h2>
+<section id="slide-org57207e3">
+<h2 id="org57207e3"><span class="section-number-2">1</span> Fun With Type Coercion</h2>
 <div class="outline-text-2" id="text-1">
 </div></section>
 </section>
 <section>
-<section id="slide-org9ec6aad">
-<h3 id="org9ec6aad"><span class="section-number-3">1.1</span> Examples of Type Coercion</h3>
+<section id="slide-org89443d7">
+<h3 id="org89443d7"><span class="section-number-3">1.1</span> Examples of Type Coercion</h3>
 <div class="org-src-container">
 
 <pre  class="src src-javascript"><span style="color: #2d9574;">'one'</span> + <span style="color: #a45bad;">1</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">'one1'</span>
@@ -86,12 +86,12 @@
 </section>
 </section>
 <section>
-<section id="slide-org3b1ca89">
-<h3 id="org3b1ca89"><span class="section-number-3">1.2</span> How Type Coercion Works</h3>
+<section id="slide-orgcb85180">
+<h3 id="orgcb85180"><span class="section-number-3">1.2</span> How Type Coercion Works</h3>
 <div class="outline-text-3" id="text-1-2">
 </div></section>
-<section id="slide-orgf84cf67">
-<h4 id="orgf84cf67"><span class="section-number-4">1.2.1</span> ECMAScript Spec Abstract Operations</h4>
+<section id="slide-orgff30973">
+<h4 id="orgff30973"><span class="section-number-4">1.2.1</span> ECMAScript Spec Abstract Operations</h4>
 <ul>
 <li><a href="http://www.ecma-international.org/ecma-262/5.1/#sec-9.3"><code>ToNumber</code></a></li>
 <li><a href="http://www.ecma-international.org/ecma-262/5.1/#sec-9.8"><code>ToString</code></a></li>
@@ -101,8 +101,8 @@
 </ul>
 
 </section>
-<section id="slide-orgf06cfa6">
-<h4 id="orgf06cfa6"><span class="section-number-4">1.2.2</span> Values Are Converted To Primitives With ToPrimitive()</h4>
+<section id="slide-orgbd56232">
+<h4 id="orgbd56232"><span class="section-number-4">1.2.2</span> Values Are Converted To Primitives With ToPrimitive()</h4>
 <ul>
 <li><code>ToPrimitive(input [, PreferredType?])</code></li>
 
@@ -116,8 +116,8 @@
 </ul>
 
 </section>
-<section id="slide-orgccad34c">
-<h4 id="orgccad34c"><span class="section-number-4">1.2.3</span> Seeing ToPrimitive() in action</h4>
+<section id="slide-orga5268ea">
+<h4 id="orga5268ea"><span class="section-number-4">1.2.3</span> Seeing ToPrimitive() in action</h4>
 <div class="org-src-container">
 
 <pre  class="src src-javascript"><span style="color: #4f97d7; font-weight: bold;">var</span> <span style="color: #7590db;">obj</span> = <span style="color: #4f97d7;">{</span>
@@ -196,8 +196,8 @@ String<span style="color: #4f97d7;">(</span>obj<span style="color: #4f97d7;">)</
 </div>
 
 </section>
-<section id="slide-org8054a06">
-<h4 id="org8054a06"><span class="section-number-4">1.2.4</span> Stepping though a conversion</h4>
+<section id="slide-orgf12e849">
+<h4 id="orgf12e849"><span class="section-number-4">1.2.4</span> Stepping though a conversion</h4>
 <div class="org-src-container">
 
 <pre  class="src src-javascript"><span style="color: #2d9574;">'one'</span> + <span style="color: #a45bad;">1</span> <span style="color: #2aa1ae; background-color: #292e34;">// </span><span style="color: #2aa1ae; background-color: #292e34;">'one1'</span>
@@ -224,12 +224,12 @@ String<span style="color: #4f97d7;">(</span>obj<span style="color: #4f97d7;">)</
 </section>
 </section>
 <section>
-<section id="slide-org2f22381">
-<h3 id="org2f22381"><span class="section-number-3">1.3</span> Using Type Coercion for Good</h3>
+<section id="slide-orgb7499c2">
+<h3 id="orgb7499c2"><span class="section-number-3">1.3</span> Using Type Coercion for Good</h3>
 <div class="outline-text-3" id="text-1-3">
 </div></section>
-<section id="slide-org1beb680">
-<h4 id="org1beb680"><span class="section-number-4">1.3.1</span> Default Assignment Shorthand</h4>
+<section id="slide-org690ee12">
+<h4 id="org690ee12"><span class="section-number-4">1.3.1</span> Default Assignment Shorthand</h4>
 <p>
 Without type coercion, values need to be explicitly checked.
 </p>
@@ -262,18 +262,18 @@ With type coercion, non-boolean values can be checked with boolean operators.
 </section>
 </section>
 <section>
-<section id="slide-org12e1f04">
-<h3 id="org12e1f04"><span class="section-number-3">1.4</span> Using Type Coercion for Evil</h3>
+<section id="slide-org23da485">
+<h3 id="org23da485"><span class="section-number-3">1.4</span> Using Type Coercion for Evil</h3>
 <div class="outline-text-3" id="text-1-4">
 </div></section>
-<section id="slide-org36150dd">
-<h4 id="org36150dd"><span class="section-number-4">1.4.1</span> Write Any JS Program With Only {}[]()!+</h4>
+<section id="slide-org6bcdaf1">
+<h4 id="org6bcdaf1"><span class="section-number-4">1.4.1</span> Write Any JS Program With Only {}[]()!+</h4>
 <p>
 This is known as JSFuck
 </p>
 </section>
-<section id="slide-org5b2752e">
-<h4 id="org5b2752e"><span class="section-number-4">1.4.2</span> Produce Numbers Without Numbers</h4>
+<section id="slide-orgf5c1dbd">
+<h4 id="orgf5c1dbd"><span class="section-number-4">1.4.2</span> Produce Numbers Without Numbers</h4>
 <ul>
 <li class="fragment roll-in"><code>+[]</code> produces <code>0</code></li>
 <li class="fragment roll-in"><code>+!+[]</code> produces <code>1</code></li>
@@ -283,8 +283,8 @@ This is known as JSFuck
 </ul>
 
 </section>
-<section id="slide-org9593c01">
-<h4 id="org9593c01"><span class="section-number-4">1.4.3</span> Produce Strings Without Alphanumeric Characters</h4>
+<section id="slide-org0e3c378">
+<h4 id="org0e3c378"><span class="section-number-4">1.4.3</span> Produce Strings Without Alphanumeric Characters</h4>
 <p>
 Get primitive values
 </p>
@@ -360,8 +360,8 @@ Extracting the <code>+</code> character
 </div>
 
 </section>
-<section id="slide-orgf1b342a">
-<h4 id="orgf1b342a"><span class="section-number-4">1.4.4</span> Executing Our JSFuck</h4>
+<section id="slide-org0a8ceb0">
+<h4 id="org0a8ceb0"><span class="section-number-4">1.4.4</span> Executing Our JSFuck</h4>
 <ul>
 <li class="fragment roll-in">Strings can't hurt us</li>
 <li class="fragment roll-in">&#x2026; unless we use <code>eval()</code></li>
@@ -404,8 +404,8 @@ translates to:
 </section>
 </div>
 </div>
-<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
-<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
 
 <script>
 // Full list of configuration options available here:
@@ -432,11 +432,11 @@ multiplex: {
 
 // Optional libraries used to extend on reveal.js
 dependencies: [
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
 });
 </script>
 </body>
