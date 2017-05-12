@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title></title>
+<meta name="author" content="(Leo Gomez)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/moon.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h2 class="author">Leo Gomez</h2><p class="date">Created: 2017-05-12 Fri 17:55</p>
+</section>
+<section id="table-of-contents">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#/slide-org1c4b7e0">1. History of Open Software</a>
+<ul>
+<li><a href="#/slide-orgaa9af97">1.1. United State of America v. IBM</a></li>
+<li><a href="#/slide-orgf9486bf">1.2. MIT's AI Lab</a></li>
+<li><a href="#/slide-org3987344">1.3. Free Software Movement</a>
+<ul>
+<li><a href="#/slide-org108cd14">1.3.1. FSF's Four Freedoms</a></li>
+<li><a href="#/slide-org5ebb9e7">1.3.2. Eric Raymond's The Cathedral and the Bazaar</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#/slide-org3e0d2b3">2. Licenses today</a>
+<ul>
+<li><a href="#/slide-org3d0b007">2.1. Restrictive Licenses</a>
+<ul>
+<li><a href="#/slide-org69bfa21">2.1.1. GPL License</a></li>
+<li><a href="#/slide-org16c480f">2.1.2. GPL-Licensed Software</a></li>
+</ul>
+</li>
+<li><a href="#/slide-org5b68843">2.2. Permissive Licenses</a>
+<ul>
+<li><a href="#/slide-org6a97a76">2.2.1. MIT License</a></li>
+<li><a href="#/slide-orga9fd2e0">2.2.2. MIT-Licensed Software</a></li>
+<li><a href="#/slide-orge99e4df">2.2.3. BSD License</a></li>
+<li><a href="#/slide-org03c0395">2.2.4. BSD-Licensed Software</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#/slide-org32e2c2b">3. Questions?</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+<section>
+<section id="slide-org1c4b7e0">
+<h2 id="org1c4b7e0"><span class="section-number-2">1</span> History of Open Software</h2>
+<div class="outline-text-2" id="text-1">
+</div></section>
+<section id="slide-orgaa9af97">
+<h3 id="orgaa9af97"><span class="section-number-3">1.1</span> United State of America v. IBM</h3>
+<p>
+IBM stopped bundling software and hardware in response to anti-trust
+suit, making software a new source of revenue.
+</p>
+
+</section>
+<section id="slide-orgf9486bf">
+<h3 id="orgf9486bf"><span class="section-number-3">1.2</span> MIT's AI Lab</h3>
+<ul>
+<li>The printer story</li>
+
+<li>Symbolics Inc.</li>
+
+</ul>
+
+</section>
+<section id="slide-org3987344">
+<h3 id="org3987344"><span class="section-number-3">1.3</span> Free Software Movement</h3>
+<p>
+Moralality vs Practically
+</p>
+
+</section>
+<section id="slide-org108cd14">
+<h4 id="org108cd14"><span class="section-number-4">1.3.1</span> FSF's Four Freedoms</h4>
+<ul>
+<li>The freedom to run the program as you wish, for any purpose (freedom
+0).</li>
+<li>The freedom to study how the program works, and change it so it does
+your computing as you wish (freedom 1). Access to the source code is
+a precondition for this.</li>
+<li>The freedom to redistribute copies so you can help your neighbor
+(freedom 2).</li>
+<li>The freedom to distribute copies of your modified versions to others
+(freedom 3). By doing this you can give the whole community a chance
+to benefit from your changes. Access to the source code is a
+precondition for this.</li>
+
+</ul>
+
+</section>
+<section id="slide-org5ebb9e7">
+<h4 id="org5ebb9e7"><span class="section-number-4">1.3.2</span> Eric Raymond's The Cathedral and the Bazaar</h4>
+<ul>
+<li>Linus's Law: Given enough eyeballs, all bugs are shallow.</li>
+
+<li>CatB is credited with convincing Netscape to open their codebase</li>
+
+<li>"Open source is not magic pixie dust."</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org3e0d2b3">
+<h2 id="org3e0d2b3"><span class="section-number-2">2</span> Licenses today</h2>
+<div class="outline-text-2" id="text-2">
+</div></section>
+<section id="slide-org3d0b007">
+<h3 id="org3d0b007"><span class="section-number-3">2.1</span> Restrictive Licenses</h3>
+<p>
+aka Copyleft Licenses
+</p>
+
+</section>
+<section id="slide-org69bfa21">
+<h4 id="org69bfa21"><span class="section-number-4">2.1.1</span> GPL License</h4>
+<ul>
+<li>Historically the most popular FOSS license</li>
+<li>Requires that modified version be distributed with the source code</li>
+<li>Modified versions must be similarly licensed</li>
+
+</ul>
+
+</section>
+<section id="slide-org16c480f">
+<h4 id="org16c480f"><span class="section-number-4">2.1.2</span> GPL-Licensed Software</h4>
+<ul>
+<li>GCC, GNU Debugger, Emacs, etc.</li>
+<li>Linux</li>
+<li>Wordpress</li>
+
+</ul>
+
+
+</section>
+<section id="slide-org5b68843">
+<h3 id="org5b68843"><span class="section-number-3">2.2</span> Permissive Licenses</h3>
+<div class="outline-text-3" id="text-2-2">
+</div></section>
+<section id="slide-org6a97a76">
+<h4 id="org6a97a76"><span class="section-number-4">2.2.1</span> MIT License</h4>
+<p>
+Copyright (c)
+</p>
+
+<p>
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to <span class="underline">deal in the Software without restrictions</span>, including
+without limitation the rights to <span class="underline">use, copy, modify, merge, publish,</span>
+<span class="underline">distribute, sublicense, and/or sell copies</span> of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+</p>
+
+<p>
+<span class="underline">The above copyright notice and this permission notice shall be included</span>
+<span class="underline">in all copies</span> or substantial portions of the Software.
+</p>
+
+<p>
+&lt;Disclaimer&gt;
+</p>
+
+</section>
+<section id="slide-orga9fd2e0">
+<h4 id="orga9fd2e0"><span class="section-number-4">2.2.2</span> MIT-Licensed Software</h4>
+<ul>
+<li>Atom</li>
+<li>Angular</li>
+<li>JQuery</li>
+<li>Mocha</li>
+<li>Node.js</li>
+<li>Ruby on Rails</li>
+<li>Three.js</li>
+
+</ul>
+
+</section>
+<section id="slide-orge99e4df">
+<h4 id="orge99e4df"><span class="section-number-4">2.2.3</span> BSD License</h4>
+<p>
+Copyright (c) , All rights reserved.
+</p>
+
+<p>
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+</p>
+
+<p>
+-Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+</p>
+
+<p>
+-Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+</p>
+
+<p>
+-Neither the name of the nor the names of its contributors may be used to
+endorse or promote products derived from this software without specific
+prior written permission.
+</p>
+
+<p>
+&lt;Disclaimer&gt;
+</p>
+
+</section>
+<section id="slide-org03c0395">
+<h4 id="org03c0395"><span class="section-number-4">2.2.4</span> BSD-Licensed Software</h4>
+<ul>
+<li>Chrome V8/Chromium</li>
+<li>D3.js</li>
+<li>Flask</li>
+<li>Homebrew</li>
+<li>Polymer</li>
+<li>React</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org32e2c2b">
+<h2 id="org32e2c2b"><span class="section-number-2">3</span> Questions?</h2>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
